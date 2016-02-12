@@ -1,42 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Diagnostics;
 
 namespace Kappa.utilities {
     class Pathfinder {
-
-        /// <summary>
-        /// Temporary method to generate a List of nodes arranged in a square grid way.
-        /// Mostly for testing purposes though it can still be used as an example.
-        /// Note that there's most definitely a cleaner way to do this.
-        /// </summary>
-        public static List<PathfinderNode> GenerateTestList(int size){
-            List<PathfinderNode> grid = new List<PathfinderNode>();
-            int i = size;
-            while(i-- > 0) {
-                int j = size;
-                while(j-- > 0) {
-                    PathfinderNode n = new PathfinderNode();
-                    n.X = j;
-                    n.Y = i;
-                    n.W = 1;
-                    n.Children = new List<PathfinderNode>();
-                    grid.Add(n);
-                }
-            }
-            i = size;
-            while(i-- > 0) {
-                int j = size;
-                while(j-- > 0) {
-                    PathfinderNode n = grid[i * size + j];
-                    if(i * size + j - size >= 0 && grid[i * size + j - size] != null) n.Children.Add(grid[i * size + j - size]); // Add top child if it exists.
-                    if(j != 0 && grid[i * size + j - 1] != null) n.Children.Add(grid[i * size + j - 1]); // Add left child if it exists.
-                    if(i * size + j + size < size * size && grid[i * size + j + size] != null) n.Children.Add(grid[i * size + j + size]); // Add bottom child if it exists.
-                    if(j != size - 1 && grid[i * size + j + 1] != null) n.Children.Add(grid[i * size + j + 1]); // Add right child if it exists.
-                }
-            }
-            return grid;
-        }
 
         public List<PathfinderNode> Grid;   // The Grid, a List of PathfinderNode objects.
         private SortByF Sort;               // Instance of the IComparer SortByF used to sort the nodes.
@@ -62,10 +30,8 @@ namespace Kappa.utilities {
         /// Class used to sort the open list to make sure the first element is always the best node to check.
         /// </summary>
         private class SortByF: IComparer<PathfinderNode> {
-            PathfinderNode N1, N2;
             public int Compare(PathfinderNode N1, PathfinderNode N2) {
-                // If F is equal for both N1 and N2, compare G instead. If G is equal, disregard the tie and return the first Node.
-                return (N1.F < N2.F) ? -1 : (N2.F < N1.F) ? 1 : (N1.G <= N2.G) ? -1 : 1; 
+                return (N1.F < N2.F) ? -1 : (N2.F < N1.F) ? 1 : 0; 
             }
         }
 
@@ -125,6 +91,12 @@ namespace Kappa.utilities {
                 N = N.P;
             }
             Path.Reverse();
+
+            // Flush the parent info from the nodes to allow reusability
+            for(byte i = 0; i < Grid.Count; i++) {
+                Grid[i].P = null;
+            }
+
             return Path;
         }
 
@@ -146,6 +118,41 @@ namespace Kappa.utilities {
                 if(Grid[i].X == X && Grid[i].Y == Y) return Grid[i];
             }
             return null;
+        }
+
+        /// <summary>
+        /// Method to generate a List of nodes arranged in a square grid way.
+        /// </summary>
+        public static List<PathfinderNode> GenerateGrid(ushort sizeX, ushort sizeY) {
+            List<PathfinderNode> grid = new List<PathfinderNode>();
+            int i = sizeY;
+            while(i-- > 0) {
+                int j = sizeX;
+                while(j-- > 0) {
+                    PathfinderNode n = new PathfinderNode();
+                    n.X = j;
+                    n.Y = i;
+                    n.W = 1;
+                    n.Children = new List<PathfinderNode>();
+                    grid.Add(n);
+                }
+            }
+            i = sizeY;
+            while(i-- > 0) {
+                int j = sizeX;
+                while(j-- > 0) {
+                    PathfinderNode n = grid[i * sizeX + j];
+                    int np = i * sizeX + j;
+                    if(np - sizeX >= 0 && grid[np - sizeX] != null) n.Children.Add(grid[np - sizeX]); // Add top child if it exists.
+
+                    if(j != 0 && grid[np - 1] != null) n.Children.Add(grid[np - 1]); // Add left child if it exists.
+
+                    if(np + sizeX < sizeY * sizeX && grid[np + sizeX] != null) n.Children.Add(grid[np + sizeX]); // Add bottom child if it exists.
+
+                    if(j != sizeX - 1 && grid[np + 1] != null) n.Children.Add(grid[np + 1]); // Add right child if it exists.
+                }
+            }
+            return grid;
         }
     }
 }

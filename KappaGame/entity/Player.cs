@@ -1,5 +1,6 @@
 ﻿using Kappa.gui;
 using Kappa.utilities;
+using Kappa.world;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,9 +58,9 @@ namespace Kappa.entity {
             // Pathfinder Tests 
             /*
                 if(Keyboard.GetState().IsKeyDown(Keys.P)) {
-                    Pathfinder P = new Pathfinder(Pathfinder.GenerateTestList(100));
+                    Pathfinder P = new Pathfinder(Pathfinder.GenerateGrid(10, 10));
                     Pathfinder.PathfinderNode Start = P.GetNodeAt(0, 0);
-                    Pathfinder.PathfinderNode End = P.GetNodeAt(20, 20);
+                    Pathfinder.PathfinderNode End = P.GetNodeAt(7, 2);
                     List<Pathfinder.PathfinderNode> Path = P.FindPath(Start, End, true);
 
                     // Outputting the path.
@@ -69,6 +70,14 @@ namespace Kappa.entity {
                     }
                 }
             */
+
+            // World generation tests
+
+                if(Keyboard.GetState().IsKeyDown(Keys.G)) {
+                    WorldGenerator World = new WorldGenerator(0);
+                    Debug.WriteLine("=====");
+                    World.GenerateWorld();
+                }
 
             base.Update(dt);
         }

@@ -94,6 +94,7 @@
     <Compile Include="world\Camera.cs" />
     <Compile Include="world\Map.cs" />
     <Compile Include="world\MapModel.cs" />
+    <Compile Include="world\WorldGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
