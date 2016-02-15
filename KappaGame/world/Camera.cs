@@ -10,7 +10,7 @@ namespace Kappa.world {
         private const float ZOOM_MAX = 1.5f;
         private const float ZOOM_MIN = .5f;
         private const float ZOOM_SPEED = 0.075f;
-        private const float MOVE_SPEED = 10f; // Higher is slower.
+        private const float MOVE_SPEED = 5f; // Higher is slower.
 
         private float _zoom;
         private Matrix _transform;

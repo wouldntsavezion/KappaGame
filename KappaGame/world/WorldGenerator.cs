@@ -65,17 +65,19 @@ namespace Kappa.world {
 
             Pathfinder P = new Pathfinder(Pathfinder.GenerateGrid(_worldWidth, _worldHeight));
 
-            List<Pathfinder.PathfinderNode> World = new List<Pathfinder.PathfinderNode>();
+            List<List<Pathfinder.PathfinderNode>> Lanes = new List<List<Pathfinder.PathfinderNode>>(_numberOfLanes);
 
-            byte i = (byte) _numberOfLanes;
-            while(i-- > 0) {
-                // Pretty sure this section is wrong.
-                World.Union(P.FindPath(P.GetNodeAt(_startX, _startY), P.GetNodeAt(_towerColumn1X, _towerColumn1Ys[i]), true));
-                World.Union(P.FindPath(P.GetNodeAt(_towerColumn1X, _towerColumn1Ys[i]), P.GetNodeAt(_towerColumn2X, _towerColumn2Ys[i]), true));
+            for(byte i = 0; i < _numberOfLanes; i++) { 
+                List<Pathfinder.PathfinderNode> Part1 = P.FindPath(P.GetNodeAt(_startX, _startY), P.GetNodeAt(_towerColumn1X, _towerColumn1Ys[i]), true);
+                List<Pathfinder.PathfinderNode> Part2 = P.FindPath(P.GetNodeAt(_towerColumn1X, _towerColumn1Ys[i]), P.GetNodeAt(_towerColumn2X, _towerColumn2Ys[i]), true);
+                Lanes.Add(new List<Pathfinder.PathfinderNode>(Part1.Count + Part2.Count));
+                Lanes[i].AddRange(Part1);
+                Lanes[i].AddRange(Part2);
+                Lanes[i] = Lanes[i].Distinct().ToList();
             }
 
-            for(i = 0; i < World.Count; i++) {
-                Debug.WriteLine(World[i].X + ", " + World[i].Y);
+            for(byte i = 0; i < Lanes[0].Count; i++) {
+                Debug.WriteLine(Lanes[0][i].X + ", " + Lanes[0][i].Y);
             }
         }
     }
